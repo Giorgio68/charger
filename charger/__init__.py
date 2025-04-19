@@ -1,17 +1,36 @@
-from .control import setup_gpio, GPIO, enable_pin, disable_pin, wait_stepper_done
+from .control import (
+    setup_gpio,
+    raise_battery_actuator,
+    lower_battery_actuator,
+    raise_hotswap_actuator,
+    lower_hotswap_actuator,
+    select_battery_one,
+    select_battery_two,
+)
+
 
 def main():
     request = setup_gpio()
 
     with request:
-        while True:
-            # lower battery one from drone
-            # start by raising actuator
-            enable_pin(request, GPIO.STEPPER_BATTERY_UP)
-            wait_stepper_done(request, GPIO.STEPPER_BATTERY_DONE)
-            disable_pin(request, GPIO.STEPPER_BATTERY_UP)
+        # lower battery one from drone
+        # start by adding hotswap
+        raise_hotswap_actuator(request)
 
-            # now we can lower the actuator
-            enable_pin(request, GPIO.STEPPER_BATTERY_DOWN)
-            wait_stepper_done(request, GPIO.STEPPER_BATTERY_DONE)
-            disable_pin(request, GPIO.STEPPER_BATTERY_DOWN)
+        # then get ready to remove battery
+        raise_battery_actuator(request)
+
+        # now we can lower the actuator
+        lower_battery_actuator(request)
+
+        # change battery base
+        select_battery_two(request)
+
+        # now we can lift the new battery
+        raise_battery_actuator(request)
+
+        # now we can lower the actuator
+        lower_battery_actuator(request)
+
+        # remove hotswap power
+        lower_hotswap_actuator(request)
