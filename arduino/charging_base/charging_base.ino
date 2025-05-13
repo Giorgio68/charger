@@ -129,7 +129,7 @@ void move_base(int steps) {
 
 void debug_msg(char *fmt, ...) {
   va_list arg;
-  char *msg;
+  char msg[256];
   va_start(arg, fmt);
 
   (void)vsprintf(msg, fmt, arg);
