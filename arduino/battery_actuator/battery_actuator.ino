@@ -13,7 +13,7 @@
 
 /* defining consts */
 #define STEPPER_MOTOR_PIN 10
-#define BATTERY_LIFTER 11
+//#define BATTERY_LIFTER 11
 #define FORWARD_PWM_PIN 3
 #define FORWARD_BRAKE_PIN 9
 #define FORWARD_DIR 12
@@ -62,18 +62,24 @@ void setup() {
 
 
 void loop() {
-  double max_extension = 105.0;
-  double rev_per_base = max_extension / LINEAR_PER_REV;
+  double max_extension = 71.0; // mm
+  int32_t rev_per_base = 54; // max_extension / LINEAR_PER_REV;
+  debug_msg("Movement: %d revolutions per mm", rev_per_base);
   bool input_received = false, move_upwards, move_downwards;
   uint8_t dir = 0;
 
   while (!input_received) {
+    Serial.println(digitalRead(UP));
+    Serial.println(digitalRead(DOWN));
     move_upwards = (bool)digitalRead(UP);
     move_downwards = (bool)digitalRead(DOWN);
 
     if (move_upwards) dir |= 1;
     if (move_downwards) dir |= 2;
     input_received = move_upwards || move_downwards;
+
+    debug_msg("Dir: %d", dir);
+    delay(1000);
   }
 
   switch (dir) {
@@ -100,7 +106,7 @@ void move_forward(double revs) {
 }
 
 
-void move_backward(double revs) {
+void move_backward(int32_t revs) {
   move_base(-1 * STEPS_PER_REV * revs);
   signal_done();
 }
@@ -113,17 +119,17 @@ void signal_done() {
 }
 
 
-void move_base(int steps) {
-  debug_msg("Moving %d steps", steps);
+void move_base(int32_t steps) {
+  debug_msg("Moving %d steps", (int)steps);
   base_motor.step(steps);
 }
 
 
-void debug_msg(char *fmt, ...) {
+void debug_msg(const char *fmt, ...) {
   va_list arg;
   char msg[256];
   va_start(arg, fmt);
 
-  (void)vsprintf(msg, fmt, arg);
+  (void)vsnprintf(msg, sizeof(msg), fmt, arg);
   (void)Serial.println(msg);
 }

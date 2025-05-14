@@ -63,7 +63,7 @@ void setup() {
 
 void loop() {
   double max_extension = 71.0; // mm
-  int32_t rev_per_base = 45; // max_extension / LINEAR_PER_REV;
+  int32_t rev_per_base = 35; // max_extension / LINEAR_PER_REV;
   debug_msg("Movement: %d revolutions per mm", rev_per_base);
   bool input_received = false, move_upwards, move_downwards;
   uint8_t dir = 0;
