@@ -11,7 +11,7 @@
 
 /* defining consts */
 #define STEPPER_MOTOR_PIN 10
-#define BATTERY_LIFTER 11
+//#define BATTERY_LIFTER 11
 #define FORWARD_PWM_PIN 3
 #define FORWARD_BRAKE_PIN 9
 #define FORWARD_DIR 12
@@ -75,11 +75,10 @@ void loop() {
 
     //(void)Serial.println("Read inputs");
 
-    if (base_1_high)
-      dir |= 1;
-    if (base_2_high)
-      dir |= 2;
+    if (base_1_high) dir |= 1;
+    if (base_2_high) dir |= 2;
     input_received = base_1_high || base_2_high;
+    debug_msg("Dir: %d", dir);
     delay(1000);
     //(void)Serial.println("Checked input value");
   }
@@ -121,7 +120,7 @@ void signal_done() {
 }
 
 
-void move_base(int steps) {
+void move_base(int32_t steps) {
   debug_msg("Moving %d steps", steps);
   base_motor.step(steps);
 }
