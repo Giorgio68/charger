@@ -47,6 +47,9 @@ def setup_gpio() -> gpiod.LineRequest:
         },
     )
 
+    for pin in [_GPIO.STEPPER_BATTERY_UP, _GPIO.STEPPER_BATTERY_DOWN, _GPIO.STEPPER_HOTSWAP_UP, _GPIO.STEPPER_HOTSWAP_DOWN, _GPIO.STEPPER_BASE_1, _GPIO.STEPPER_BASE_2]:
+        _disable_pin(request, pin)
+
     return request
 
 
@@ -81,9 +84,9 @@ def select_battery_one(request: gpiod.LineRequest) -> None:
 
 
 def select_battery_two(request: gpiod.LineRequest) -> None:
-    _enable_pin(request, _GPIO.STEPPER_BASE_1)
+    _enable_pin(request, _GPIO.STEPPER_BASE_2)
     _wait_stepper_done(request, _GPIO.STEPPER_BASE_DONE)
-    _disable_pin(request, _GPIO.STEPPER_BASE_1)
+    _disable_pin(request, _GPIO.STEPPER_BASE_2)
 
 
 def _enable_pin(req: gpiod.LineRequest, line: int) -> None:
